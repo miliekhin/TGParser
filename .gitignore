@@ -1,0 +1,10 @@
+.env
+.pytest_cache/
+.idea/
+__pycache__
+venv
+tester.py
+test_array.py
+patterns.py
+settings.py
+z_manual
