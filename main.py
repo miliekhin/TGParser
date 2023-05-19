@@ -72,4 +72,3 @@ if __name__ == '__main__':
         print('Waiting for new telegram messages...')
         client.start()
         client.run_until_disconnected()
-
