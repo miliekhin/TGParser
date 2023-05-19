@@ -58,8 +58,6 @@ def get_final_object(msg):
         final_object['comment'] = raw_msg
         return final_object
 
-    if final_object['cars_num'] == -1:
-        final_object['cars_num'] = 0
     final_object['comment'] = raw_msg
     final_object['recognition_result'] = RESULT_ACCEPT
     return final_object
