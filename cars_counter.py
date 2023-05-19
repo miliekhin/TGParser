@@ -205,7 +205,8 @@ def find_place_name(final_object):
         {'moyka': 'мойк'},
         {'zapravka': 'заправк|азс|луко'},
         {'sklad': 'склад|овощебаз'},
-        {'most': 'мост'},
+        {'most_pochti': r'почти\D{,8} мост'},
+        {'most': r'мост'},
         {'kust': 'куст'},
         {'ostanovka': 'остановк|коне?ц[ае]? (магазинов|ларьков)'},
         {'spusk': 'спуск'},
@@ -225,6 +226,8 @@ def find_place_name(final_object):
             return RESULT_NEED_ASSIST
         if len(spans) == 1:
             print('[find_place_name] Finded place text:', msg[spans[0][0]: spans[0][1]])
+            if key_place == 'most' and 'most_pochti' in finded_places:
+                continue
             finded_places.append(key_place)
     if len(finded_places) > 1:
         print('[find_place_name] Finded many place names. Need assist:', finded_places)
@@ -278,6 +281,14 @@ def get_cars_count_by_place(final_object):
                 cars_count = RESULT_NEED_ASSIST
             else:
                 cars_count = CARS_COUNT_MOST
+        case 'most_pochti':
+            if not final_object['way']:
+                final_object['way'] = WAY_TO_RF
+            if final_object['kpp_name'] != KPP_NAMES[0] or final_object['way'] != WAY_TO_RF:
+                print('[get_cars_count_by_place] Pochti most not on the kpp Uspenka to RF. Need assist.')
+                cars_count = RESULT_NEED_ASSIST
+            else:
+                cars_count = CARS_COUNT_MOST_POCHTI
         case 'kust':
             if not final_object['way']:
                 final_object['way'] = WAY_TO_RF
