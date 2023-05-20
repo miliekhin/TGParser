@@ -17,6 +17,7 @@ RUN addgroup --system tg_parser \
 
 # Requirements are installed here to ensure they will be cached.
 COPY TGParser/requirements.txt /requirements.txt
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r /requirements.txt \
     && rm /requirements.txt
 

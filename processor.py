@@ -114,9 +114,9 @@ def is_msg_unacceptable(msg):
         sp = bw_obj.span()
         print('[is_msg_unacceptable] Bad word found:', msg[sp[0]: sp[1]])
         return True
-    # if msg[-1] == '?':
-    #     print('[is_msg_unacceptable] ? at the end of message.')
-    #     return True
+    if msg[-1] == '?':
+        print('[is_msg_unacceptable] ? at the end of message.')
+        return True
     return False
 
 
@@ -217,9 +217,9 @@ def find_way_rf(msg):
         if not res_ex_palka:
             print('[find_ways_rf] No ways to RF found.')
             return None
-    elif len(spans) > 1:
-        print('[find_ways_rf] Many ways to RF found. Need assist:', [msg[sp[0]: sp[1]] for sp in spans])
-        return RESULT_NEED_ASSIST
+    # elif len(spans) > 1:
+    #     print('[find_ways_rf] Many ways to RF found. Need assist:', [msg[sp[0]: sp[1]] for sp in spans])
+    #     return RESULT_NEED_ASSIST
 
     if len(spans):
         print('[find_ways_rf] Way to RF found:', [msg[sp[0]: sp[1]] for sp in spans])
@@ -236,8 +236,8 @@ def find_way_dnr(msg):
     if not len(spans):
         print('[find_way_dnr] No ways to DNR found.')
         return None
-    if len(spans) > 1:
-        print('[find_ways_dnr] Many ways to DNR found. Need assist:', [msg[sp[0]: sp[1]] for sp in spans])
-        return RESULT_NEED_ASSIST
+    # if len(spans) > 1:
+    #     print('[find_ways_dnr] Many ways to DNR found. Need assist:', [msg[sp[0]: sp[1]] for sp in spans])
+    #     return RESULT_NEED_ASSIST
     print('[find_way_dnr] Way to DNR found:', [msg[sp[0]: sp[1]] for sp in spans])
     return WAY_TO_DNR
