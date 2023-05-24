@@ -141,7 +141,7 @@ def find_povorot(final_object):
         return None
 
     print('[find_povorot] Matching:')
-    fpis_result = find_pattern_in_sentence(fr'поворот(?!а (на|в) {VYSELKI})', final_object['comment'])
+    fpis_result = find_pattern_in_sentence(POVOROT, final_object['comment'])
     if fpis_result == RESULT_NEED_ASSIST or fpis_result is None:
         return fpis_result
 
