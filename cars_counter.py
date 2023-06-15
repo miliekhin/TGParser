@@ -71,7 +71,6 @@ def find_cars_count(final_object):
         else:
             cars_count = cars_count_by_digits_and_range
 
-
     if cars_count:
         cars_count += random.randint(1, 2)
 
@@ -203,7 +202,7 @@ def find_place_name(final_object):
     places = (
         {'gostinica': 'гостиниц|столов|кафе|душевы'},
         {'moyka': 'мойк'},
-        {'zapravka': 'заправк|азс|луко'},
+        {'zapravka': r'(азс|заправк\w+) луко|заправк|азс|луко'},
         {'sklad': r'склад|овощебаз|овощн\D+ баз'},
         {'most_pochti': r'почти\D{,8} мост'},
         {'most': r'мост'},

@@ -1,4 +1,6 @@
 import re
+import random
+import time
 from patterns import *
 from settings import *
 from preparator import prepare_message
@@ -70,7 +72,15 @@ def find_by_pattern(final_object):
         if match_obj:
             sp = match_obj.span()
             print('[find_by_pattern] Found pattern:', msg[sp[0]: sp[1]])
-            final_object['way'] = ptrn_map['way']
+
+            way = ptrn_map['way']
+            if way == WAY_BY_HOUR:
+                hour = time.localtime().tm_hour
+                print('[find_by_pattern] Current local hour:', hour)
+                final_object['way'] = WAY_TO_RF if hour < 13 else WAY_TO_DNR
+            else:
+                final_object['way'] = way
+
             if not ptrn_map['kpp_name']:
                 final_object['kpp_name'] = find_kpp(msg)
                 if not final_object['kpp_name']:
@@ -79,8 +89,9 @@ def find_by_pattern(final_object):
             else:
                 final_object['kpp_name'] = ptrn_map['kpp_name']
 
-            if ptrn_map['cars_num'] != -1:
-                final_object['cars_num'] = ptrn_map['cars_num']
+            cn = ptrn_map['cars_num']
+            if cn != -1:
+                final_object['cars_num'] = cn + random.randint(1, 2) if cn else 0
             else:
                 digit = cars_by_digits_and_range(msg)
                 if not isinstance(digit, int):
