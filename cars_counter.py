@@ -212,6 +212,7 @@ def find_place_name(final_object):
         {'post_gai': 'пост(а|ом)? гаи'},
         {'stella': 'стелл'},
         {'vyselki': fr'до поворота на {VYSELKI}'},
+        {'maksimov': r'максимов'},
     )
     ptrn = ''
     key_place = ''
@@ -354,6 +355,14 @@ def get_cars_count_by_place(final_object):
                 cars_count = RESULT_NEED_ASSIST
             else:
                 cars_count = CARS_COUNT_VYSELKI
+        case 'maksimov':
+            if not final_object['way']:
+                final_object['way'] = WAY_TO_DNR
+            if final_object['kpp_name'] != KPP_NAMES[2] or final_object['way'] != WAY_TO_DNR:
+                print('[get_cars_count_by_place] Maksimov not on the kpp Uspenka to RF. Need assist.')
+                cars_count = RESULT_NEED_ASSIST
+            else:
+                cars_count = CARS_COUNT_MAKSIMOV
 
     print('[get_cars_count_by_place] Result', cars_count)
     return cars_count
