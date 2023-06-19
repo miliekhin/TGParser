@@ -29,11 +29,12 @@ def get_final_object(msg):
     msg = clean_trucks(msg)
     final_object['comment'] = msg
 
-    kpp_name = find_kpp(msg)
-    if not kpp_name:
+    result_kpp_name = find_kpp(msg)
+    if result_kpp_name in [RESULT_NEED_ASSIST, RESULT_BAD_MSG]:
+        final_object['recognition_result'] = result_kpp_name
         final_object['comment'] = raw_msg
         return final_object
-    final_object['kpp_name'] = kpp_name
+    final_object['kpp_name'] = result_kpp_name
 
     result_find_way = find_way(final_object)
     if result_find_way in [RESULT_NEED_ASSIST, RESULT_BAD_MSG]:
@@ -148,27 +149,31 @@ def pre_cleaner(msg):
     return msg
 
 
-def is_many_kpp(msg):
-    res = re.findall(r'(нов[о|а]{0,2}з|в[оа]знес|успен|матвее|кург|марин|куйб)', msg)
-    if bool(res):
-        print(f'Many kpps in message detected: ', res)
-    return bool(res)
+def is_many_kpp(arr, msg):
+    founded_kpps = ''
+    for kpp in arr:
+        spans = [i.span() for i in re.finditer(kpp, msg)]
+        if spans:
+            if founded_kpps:
+                print('[is_many_kpp] Many KPPs found. Need assist:',
+                      founded_kpps + [msg[sp[0]: sp[1]] for sp in spans])
+                return True
+            else:
+                founded_kpps = [msg[sp[0]: sp[1]] for sp in spans]
+
+    return False
 
 
 def find_kpp(msg):
     spans = [i.span() for i in re.finditer(RE_KPP_ALL, msg)]
     if not len(spans):
         print('[find_kpp] KPP not found.')
-        return None
-    if len(spans) > 1:
-        if len(spans) == 2:
-            sp1 = msg[spans[0][0]: spans[0][1]]
-            sp2 = msg[spans[1][0]: spans[1][1]]
-            if sp1 == sp2:
-                del spans[1]
-        else:
-            print('[find_kpp] Many KPPs was founded:', [msg[sp[0]: sp[1]] for sp in spans])
-            return None
+        return RESULT_BAD_MSG
+
+    if is_many_kpp((RE_KPP_USP_DNR, RE_KPP_MAR_DNR, RE_KPP_NOV_DNR, RE_KPP_ULN_DNR, RE_KPP_SHR_RF), msg):
+        return RESULT_NEED_ASSIST
+    if is_many_kpp((RE_KPP_USP_RF, RE_KPP_MAR_RF, RE_KPP_NOV_RF, RE_KPP_SHR_RF), msg):
+        return RESULT_NEED_ASSIST
 
     w = msg[spans[0][0]: spans[0][1]]
     print('[find_kpps] Result:', w)
@@ -184,7 +189,7 @@ def find_kpp(msg):
         kpp_name = KPP_NAMES[3]
 
     if not kpp_name:
-        return None
+        return RESULT_NEED_ASSIST
     print('[find_kpp] KPP name:', kpp_name)
     return kpp_name
 
