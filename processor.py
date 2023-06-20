@@ -33,6 +33,8 @@ def get_final_object(msg):
     if result_kpp_name in [RESULT_NEED_ASSIST, RESULT_BAD_MSG]:
         final_object['recognition_result'] = result_kpp_name
         final_object['comment'] = raw_msg
+        final_object['way'] = WAY_TO_RF
+        final_object['kpp_name'] = KPP_NAMES[0]
         return final_object
     final_object['kpp_name'] = result_kpp_name
 
@@ -40,6 +42,7 @@ def get_final_object(msg):
     if result_find_way in [RESULT_NEED_ASSIST, RESULT_BAD_MSG]:
         final_object['recognition_result'] = result_find_way
         final_object['comment'] = raw_msg
+        final_object['way'] = WAY_TO_RF
         return final_object
     final_object['way'] = result_find_way
 
