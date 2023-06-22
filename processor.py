@@ -25,8 +25,8 @@ def get_final_object(msg):
 
     if is_msg_unacceptable(msg):
         return final_object
-    msg = clean_invalid_data(msg)
     msg = clean_trucks(msg)
+    msg = clean_invalid_data(msg)
     final_object['comment'] = msg
 
     result_kpp_name = find_kpp(msg)
@@ -69,6 +69,12 @@ def get_final_object(msg):
     return final_object
 
 
+def get_way_by_local_hour():
+    hour = time.localtime().tm_hour
+    print('[get_way_by_local_hour] Current local hour:', hour)
+    return WAY_TO_RF if hour < 13 else WAY_TO_DNR
+
+
 def find_by_pattern(final_object):
     msg = final_object['comment']
     for ptrn_map in HARD_PATTERNS:
@@ -79,9 +85,7 @@ def find_by_pattern(final_object):
 
             way = ptrn_map['way']
             if way == WAY_BY_HOUR:
-                hour = time.localtime().tm_hour
-                print('[find_by_pattern] Current local hour:', hour)
-                final_object['way'] = WAY_TO_RF if hour < 13 else WAY_TO_DNR
+                final_object['way'] = get_way_by_local_hour()
             else:
                 final_object['way'] = way
 
@@ -152,7 +156,13 @@ def pre_cleaner(msg):
     return msg
 
 
-def is_many_kpp(arr, msg):
+def is_many_kpp(arr, msg, way):
+    ptrn_except = fr'{RE_KPP_ULN_DNR}.{{1,12}}{RE_KPP_SHR_RF}|{RE_KPP_SHR_RF}.{{1,6}}{RE_KPP_ULN_DNR}'
+    if re.search(ptrn_except, msg):
+        if way == WAY_TO_RF:
+            print('[is_many_kpp] ul-shramko found.')
+            return False
+
     founded_kpps = ''
     for kpp in arr:
         spans = [i.span() for i in re.finditer(kpp, msg)]
@@ -173,9 +183,9 @@ def find_kpp(msg):
         print('[find_kpp] KPP not found.')
         return RESULT_BAD_MSG
 
-    if is_many_kpp((RE_KPP_USP_DNR, RE_KPP_MAR_DNR, RE_KPP_NOV_DNR, RE_KPP_ULN_DNR, RE_KPP_SHR_RF), msg):
+    if is_many_kpp((RE_KPP_USP_DNR, RE_KPP_MAR_DNR, RE_KPP_NOV_DNR, RE_KPP_ULN_DNR, RE_KPP_SHR_RF), msg, WAY_TO_RF):
         return RESULT_NEED_ASSIST
-    if is_many_kpp((RE_KPP_USP_RF, RE_KPP_MAR_RF, RE_KPP_NOV_RF, RE_KPP_SHR_RF), msg):
+    if is_many_kpp((RE_KPP_USP_RF, RE_KPP_MAR_RF, RE_KPP_NOV_RF, RE_KPP_SHR_RF), msg, WAY_TO_DNR):
         return RESULT_NEED_ASSIST
 
     w = msg[spans[0][0]: spans[0][1]]
@@ -208,7 +218,7 @@ def find_way(final_object):
         return RESULT_NEED_ASSIST
     if all([not res_dnr, not res_rf]):
         if re.search(PUSTO_OBE_STORONY, msg):
-            res_rf = WAY_TO_RF
+            res_rf = get_way_by_local_hour()
         elif final_object['kpp_name']:
             print('[find_way] Ways not found but KPP exist. Need assist.')
             return RESULT_NEED_ASSIST

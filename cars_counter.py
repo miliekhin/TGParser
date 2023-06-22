@@ -202,6 +202,7 @@ def find_place_name(final_object):
     places = (
         {'gostinica': 'гостиниц|столов|кафе|душевы'},
         {'moyka': 'мойк'},
+        {'za_zapravku': r'за ((азс|заправк\w+) луко|заправк|азс|луко)'},
         {'zapravka': r'(азс|заправк\w+) луко|заправк|азс|луко'},
         {'sklad': r'склад|овощебаз|овощн\D+ баз'},
         {'most_pochti': r'почти\D{,8} мост'},
@@ -220,15 +221,21 @@ def find_place_name(final_object):
     for place in places:
         for key_place in place:
             ptrn = place[key_place]
+
         spans = [i.span() for i in re.finditer(ptrn, msg)]
         if len(spans) > 1:
             print('[find_place_name] Many same places found. Need assist:', [msg[sp[0]: sp[1]] for sp in spans])
             return RESULT_NEED_ASSIST
+
         if len(spans) == 1:
             print('[find_place_name] Finded place text:', msg[spans[0][0]: spans[0][1]])
             if key_place == 'most' and 'most_pochti' in finded_places:
                 continue
+            if key_place == 'zapravka' and 'za_zapravku' in finded_places:
+                continue
+
             finded_places.append(key_place)
+
     if len(finded_places) > 1:
         print('[find_place_name] Finded many place names. Need assist:', finded_places)
         return RESULT_NEED_ASSIST
@@ -327,6 +334,26 @@ def get_cars_count_by_place(final_object):
                 cars_count = RESULT_NEED_ASSIST
             else:
                 cars_count = CARS_COUNT_POST_GAI
+        case 'za_zapravku':
+            if final_object['kpp_name'] == KPP_NAMES[0]:
+                if not final_object['way']:
+                    final_object['way'] = WAY_TO_RF
+                if final_object['way'] == WAY_TO_RF:
+                    cars_count = CARS_COUNT_ZA_ZAPRAVKU_USPEN_TO_RF
+                else:
+                    cars_count = CARS_COUNT_ZA_ZAPRAVKU_USPEN_TO_DNR
+            if final_object['kpp_name'] == KPP_NAMES[1]:
+                print('[get_cars_count_by_place] Zapravka on the kpp Marinovka. Need assist.')
+                cars_count = RESULT_NEED_ASSIST
+            if final_object['kpp_name'] == KPP_NAMES[2]:
+                if final_object['way'] == WAY_TO_RF:
+                    print('[get_cars_count_by_place] Zapravka on the kpp Novoaz to rf. Need assist.')
+                    cars_count = RESULT_NEED_ASSIST
+                else:
+                    cars_count = CARS_COUNT_ZA_ZAPRAVKU_NOVOAZ_TO_DNR
+            if final_object['kpp_name'] == KPP_NAMES[3]:
+                print('[get_cars_count_by_place] Zapravka on the kpp shramko. Need assist.')
+                cars_count = RESULT_NEED_ASSIST
         case 'zapravka':
             if final_object['kpp_name'] == KPP_NAMES[0]:
                 if not final_object['way']:
