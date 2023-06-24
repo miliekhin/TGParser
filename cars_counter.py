@@ -71,11 +71,31 @@ def find_cars_count(final_object):
         else:
             cars_count = cars_count_by_digits_and_range
 
-    if cars_count:
-        cars_count += random.randint(1, 2)
-
+    cars_count = get_rand_cars(cars_count)
     print('[find_cars_count] Result:', cars_count)
     return cars_count
+
+
+def get_rand_cars(cars):
+    if cars is None:
+        return cars
+
+    if 7 < cars < 15:
+        cars += random.randint(-1, 2)
+    if 15 < cars < 30:
+        cars += random.randint(-2, 2)
+    if 30 < cars < 50:
+        cars += random.randint(-3, 4)
+    if 50 < cars < 70:
+        cars += random.randint(-5, 5)
+    if 70 < cars < 100:
+        cars += random.randint(-7, 7)
+    if 100 < cars < 150:
+        cars += random.randint(-8, 8)
+    if cars > 150:
+        cars += random.randint(-11, 10)
+
+    return cars
 
 
 def is_input_object_consistent(final_object):
@@ -204,7 +224,7 @@ def find_place_name(final_object):
         {'moyka': 'мойк'},
         {'za_zapravku': r'за ((азс|заправк\w+) луко|заправк|азс|луко)'},
         {'zapravka': r'(азс|заправк\w+) луко|заправк|азс|луко'},
-        {'sklad': r'склад|овощебаз|овощн\D+ баз'},
+        {'sklad': r'склад|овощ(н|ебаз)'},
         {'most_pochti': r'почти\D{,8} мост'},
         {'most': r'мост'},
         {'kust': 'куст'},
