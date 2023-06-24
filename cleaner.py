@@ -30,7 +30,11 @@ def clean_trucks_by_pattern(msg):
         },
         {
             'ptrn_gruz': p2,
-            'ptrn_full': fr'легковы[хе] машин {D_RANGE}.+{p2}',
+            'ptrn_full': fr'легковы[хе] машины? {D_RANGE}.+{p2}',
+        },
+        {
+            'ptrn_gruz': p3,
+            'ptrn_full': fr'{D_RANGE} легковы[хе] машин.+{p3}',
         },
         {
             'ptrn_gruz': p2,
