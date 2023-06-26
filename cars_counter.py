@@ -64,7 +64,16 @@ def find_cars_count(final_object):
             cars_count = cars_palka_dnr + cars_count_by_digits_and_range
         elif cars_povorot is not None:
             cars_count = cars_povorot + cars_count_by_digits_and_range
-        elif cars_count is not None or (cars_palka_dnr is not None and cars_povorot is not None):
+        elif cars_pusto is not None and cars_count_by_digits_and_range != 0:
+            print('[find_cars_count] Found cars_pusto but cars_count_by_digits_and_range not 0. Need assist.')
+            final_object['cars_num'] = cars_count
+            return RESULT_NEED_ASSIST
+        elif cars_count is not None and (
+                cars_palka_dnr is not None or
+                cars_povorot is not None or
+                cars_neutralka is not None or
+                cars_count_by_place is not None
+        ):
             print('[find_cars_count] Many cars counts found after cars_by_digits_and_range. Need assist.')
             final_object['cars_num'] = cars_count
             return RESULT_NEED_ASSIST
