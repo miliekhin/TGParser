@@ -46,7 +46,7 @@ def clean_trucks_by_pattern(msg):
         },
         {
             'ptrn_gruz': p4,
-            'ptrn_full': fr'{PUSTO_MIX}.+{p4}',
+            'ptrn_full': fr'{p4}',
         },
     )
 
