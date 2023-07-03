@@ -86,6 +86,7 @@ def find_cars_count(final_object):
 
 
 def get_rand_cars(cars):
+    init_val = cars
     if cars is None:
         return cars
 
@@ -103,6 +104,9 @@ def get_rand_cars(cars):
         cars += random.randint(-8, 8)
     if cars > 150:
         cars += random.randint(-11, 10)
+
+    if init_val == cars and cars > 0:
+        cars += random.randint(1, 2)
 
     return cars
 
